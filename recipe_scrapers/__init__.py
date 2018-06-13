@@ -20,6 +20,7 @@ from .paninihappy import PaniniHappy
 from .realsimple import RealSimple
 from .simplyrecipes import SimplyRecipes
 from .steamykitchen import SteamyKitchen
+from .tasty import Tasty
 from .tastykitchen import TastyKitchen
 from .thepioneerwoman import ThePioneerWoman
 from .thevintagemixer import TheVintageMixer
@@ -48,6 +49,7 @@ SCRAPERS = {
     RealSimple.host(): RealSimple,
     SimplyRecipes.host(): SimplyRecipes,
     SteamyKitchen.host(): SteamyKitchen,
+    Tasty.host(): Tasty,
     TastyKitchen.host(): TastyKitchen,
     ThePioneerWoman.host(): ThePioneerWoman,
     TheVintageMixer.host(): TheVintageMixer,
