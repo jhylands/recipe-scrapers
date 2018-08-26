@@ -140,6 +140,7 @@ class AbstractScraper():
             #    request.urlopen(request.Request(url, headers=HEADERS)).read(),
             #    "html.parser"
             #)
+            #test
         self.url = url
 
     def url(self):
