@@ -135,7 +135,7 @@ class AbstractScraper():
             print("Status Code - %s " % rcode)
 
             self.soup = BeautifulSoup(response.content, 'lxml')
-            
+
             #self.soup = BeautifulSoup(
             #    request.urlopen(request.Request(url, headers=HEADERS)).read(),
             #    "html.parser"
