@@ -130,7 +130,7 @@ class AbstractScraper():
                     "html.parser"
                 )
         else:
-            response = requests.get(url, headers=header, proxies=proxy)
+            response = requests.get(url, headers=self.header, proxies=self.proxy)
             rcode = response.status_code
             print("Status Code - %s " % rcode)
 
