@@ -92,6 +92,8 @@ def getProxy():
 
 
 class AbstractScraper():
+    proxy = getProxy()
+    header = {'User-Agent': str(ua.random)}
 
     def __getattribute__(self, name):
         """
@@ -128,8 +130,6 @@ class AbstractScraper():
                     "html.parser"
                 )
         else:
-            proxy = getProxy()
-            header = {'User-Agent': str(ua.random)}
             response = requests.get(url, headers=header, proxies=proxy)
             rcode = response.status_code
             print("Status Code - %s " % rcode)
