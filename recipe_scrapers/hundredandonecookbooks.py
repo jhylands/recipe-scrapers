@@ -1,36 +1,64 @@
-from ._abstract import AbstractScraper
-from ._utils import get_minutes, normalize_string
+from ._abstract import JSONScraper
+from ._utils import get_minutes, normalize_string, dateCleaner
 
-
-class HundredAndOneCookbooks(AbstractScraper):
+class HundredAndOneCookbooks(JSONScraper):
 
     @classmethod
     def host(self):
         return '101cookbooks.com'
 
     def title(self):
-        return self.soup.find('h1').get_text()
+        return self.data["name"]
+
+    #need to figure out something for date published
+    def datePublished(self):
+        date = dateCleaner(self.data["datePublished"],6)
+        return date
+
+    def description(self):
+        return self.data["description"]
+
 
     def total_time(self):
-        return get_minutes(self.soup.find(
-            'span',
-            {'class': 'preptime'})
-        )
+        return get_minutes(data["prepTime"])
+
 
     def ingredients(self):
-        ingredients = self.soup.find(
-            'div',
-            {'id': 'recipe'}
-        ).find('blockquote').find('p')
-        return ingredients.get_text().split('\n')
+        ing = ""
+        ingList = self.data['recipeIngredient']
+        i = 0
+        while i < len(ingList):
+            ing += ingList[i] + "\n"
+            i += 1
+        return ing
+
 
     def instructions(self):
-        instructions = self.soup.find(
-            'div',
-            {'id': 'recipe'}
-        ).find('blockquote').find_next_siblings()
+        #this is a nested array
+        instrList = self.data['recipeInstructions']
+        i = 0
+        instr = ""
+        while i < len(instrList):
+            instr += instrList[i]["text"] + "\n"
+            i += 1
 
-        return '\n'.join([
-            normalize_string(instruction.get_text())
-            for instruction in instructions
-        ])
+        return instr
+
+    def category(self):
+        return self.data["recipeCategory"][0]
+
+    def imgURL(self):
+        return self.data["image"][0]
+
+
+    def sodium(self):
+        return self.data["nutrition"]["sodiumContent"]
+
+    def fat(self):
+        return self.data["nutrition"]["fatContent"]
+
+    def carbs(self):
+        return self.data["nutrition"]["carbohydrateContent"]
+
+    def calories(self):
+        return self.data["nutrition"]["calories"]

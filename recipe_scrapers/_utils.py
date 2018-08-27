@@ -53,3 +53,14 @@ def on_exception_return(to_return):
                 return to_return
         return wrap
     return decorate
+
+
+def dateCleaner(d,T):
+    #date cleaner will return a date and time without offset where T = the offset length to remove and
+    #if there is no date it will return today's date and time to fulfill the DB requirements
+    if d != "null":
+        datePosted = d.replace("T", " ")[:-T]
+    else:
+        datePosted = time.strftime('%Y-%m-%d %H:%M:%S')
+
+    return datePosted
