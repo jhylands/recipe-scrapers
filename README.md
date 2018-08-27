@@ -1,8 +1,5 @@
 ## Recipe scrapers
 
-[![Build Status](https://travis-ci.org/hhursev/recipe-scrapers.svg?branch=master)](https://travis-ci.org/hhursev/recipe-scrapers)
-[![Coverage Status](https://coveralls.io/repos/hhursev/recipe-scraper/badge.svg?branch=master&service=github)](https://coveralls.io/github/hhursev/recipe-scraper?branch=master)
-
 "A simple web scraping tool for recipe sites I use in a project of mine that makes sense to live as
 a separate package. **No Python 2 support.** " hhursev
 I have added to the original scraper to add JSON parsing to simplify scraping web sites that follow the schema.org format for ld+json. I have also added more data to scrape for my project.
