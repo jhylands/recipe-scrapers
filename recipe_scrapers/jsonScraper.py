@@ -1,6 +1,14 @@
+from .Proxy import Proxy
+from fake_useragent import UserAgent
+from bs4 import BeautifulSoup
+import  json
+import requests
+
+# some sites close their content for 'bots', so user-agent must be supplied using random user agent
+ua = UserAgent() # From here we generate a random user agent
+
 
 class JSONScraper():
-    proxy = getProxy()
     header = {'User-Agent': str(ua.random)}
 
     def __getattribute__(self, name):
@@ -39,7 +47,12 @@ class JSONScraper():
 
         return object.__getattribute__(self, name)
 
-    def __init__(self, url, test=False):
+    def __init__(self, url,proxy=False, test=False):
+        if proxy:
+            self.proxies = Proxy()
+            self.proxy = getProxy()
+        else:
+            self.proxy = None
         if test:  # when testing, we load a file
             with url:
                 self.soup = BeautifulSoup(

@@ -1,19 +1,6 @@
-try:
-    from urllib import request
-except:
-    from urllib2 import urlopen as request
-    from urllib2 import Request
-
 import requests
-
 from bs4 import BeautifulSoup
-from requests.models import Response
-
-
 from fake_useragent import UserAgent
-
-import random, json
-
 from .Proxy import Proxy
 # some sites close their content for 'bots', so user-agent must be supplied using random user agent
 ua = UserAgent() # From here we generate a random user agent
