@@ -78,7 +78,7 @@ _get_headers = lambda user_agent: {
 _get_proxy = lambda proxy: {
     'http': proxy,
     'https': proxy
-
+}
 
 
 def url_path_to_dict(path):
