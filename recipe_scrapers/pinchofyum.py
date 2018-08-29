@@ -1,4 +1,4 @@
-from ._abstract import JSONScraper
+from .JsonScraper import JSONScraper
 from ._utils import get_minutes, normalize_string, dateCleaner
 
 class PinchOfYum(JSONScraper):
