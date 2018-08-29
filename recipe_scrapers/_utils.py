@@ -1,4 +1,4 @@
-import re
+import re, time
 
 
 TIME_REGEX = re.compile(r'(\D*(?P<hours>\d+)\s*(hour|hours|hrs|hr|h|Hours|H))?(\D*(?P<minutes>\d+)\s*(minute|minutes|mins|min|m|Minutes|M))?')
@@ -39,3 +39,36 @@ def normalize_string(string):
             u'\n', u' ').replace(
             u'\t', u' ').strip()
     )
+
+
+def on_exception_return(to_return):
+    """
+    On unpredicted exception return `to_return` provided in the decorator.
+    Still raise some specific errors (as NotImplementedError listed here)
+
+    This is needed due to not being able to predict what elements can be missing
+    from the DOM and not being able to foresee all the possible erorrs from bs4
+    """
+    def decorate(decorated_function):
+        @wraps(decorated_function)
+        def wrap(*args, **kwargs):
+            try:
+                result = decorated_function(*args, **kwargs)
+                return result
+            except NotImplementedError as e:
+                raise e
+            except Exception:
+                return to_return
+        return wrap
+    return decorate
+
+
+def dateCleaner(d,T):
+    #date cleaner will return a date and time without offset where T = the offset length to remove and
+    #if there is no date it will return today's date and time to fulfill the DB requirements
+    if d != "null":
+        datePosted = d.replace("T", " ")[:-T]
+    else:
+        datePosted = time.strftime('%Y-%m-%d %H:%M:%S')
+
+    return datePosted

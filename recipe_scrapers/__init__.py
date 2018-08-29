@@ -4,6 +4,9 @@ from requests_futures.sessions import FuturesSession
 import requests
 import datetime
 
+from .jsonScraper import JsonScraper
+
+
 from .allrecipes import AllRecipes, AllRecipesUKAsia
 from .bbcfood import BBCFood
 from .bbcgoodfood import BBCGoodFood
@@ -31,6 +34,7 @@ from .thepioneerwoman import ThePioneerWoman
 from .thevintagemixer import TheVintageMixer
 from .twopeasandtheirpod import TwoPeasAndTheirPod
 from .whatsgabycooking import WhatsGabyCooking
+from .pinchofyum import PinchOfYum
 
 from ._proxy import get_proxies, get_user_agents_generator
 
@@ -64,6 +68,7 @@ SCRAPERS.update(dict.fromkeys(ThePioneerWoman.host(), ThePioneerWoman))
 SCRAPERS.update(dict.fromkeys(TheVintageMixer.host(), TheVintageMixer))
 SCRAPERS.update(dict.fromkeys(TwoPeasAndTheirPod.host(), TwoPeasAndTheirPod))
 SCRAPERS.update(dict.fromkeys(WhatsGabyCooking.host(), WhatsGabyCooking))
+SCRAPERS.update(dict.fromkeys(PinchOfYum.host(), PinchOfYum))
 
 
 _get_headers = lambda user_agent: {
@@ -73,34 +78,7 @@ _get_headers = lambda user_agent: {
 _get_proxy = lambda proxy: {
     'http': proxy,
     'https': proxy
-SCRAPERS = {
-    AllRecipes.host(): AllRecipes,
-    BBCFood.host(): BBCFood,
-    BBCGoodFood.host(): BBCGoodFood,
-    BonAppetit.host(): BonAppetit,
-    ClosetCooking.host(): ClosetCooking,
-    Cookstr.host(): Cookstr,
-    Epicurious.host(): Epicurious,
-    FineDiningLovers.host(): FineDiningLovers,
-    FoodNetwork.host(): FoodNetwork,
-    FoodRepublic.host(): FoodRepublic,
-    GialloZafferano.host(): GialloZafferano,
-    HundredAndOneCookbooks.host(): HundredAndOneCookbooks,
-    Inspiralized.host(): Inspiralized,
-    JamieOliver.host(): JamieOliver,
-    MyBakingAddiction.host(): MyBakingAddiction,
-    NIHHealthyEating.host(): NIHHealthyEating,
-    PaniniHappy.host(): PaniniHappy,
-    RealSimple.host(): RealSimple,
-    SimplyRecipes.host(): SimplyRecipes,
-    SteamyKitchen.host(): SteamyKitchen,
-    Tasty.host(): Tasty,
-    TastyKitchen.host(): TastyKitchen,
-    ThePioneerWoman.host(): ThePioneerWoman,
-    TheVintageMixer.host(): TheVintageMixer,
-    TwoPeasAndTheirPod.host(): TwoPeasAndTheirPod,
-    WhatsGabyCooking.host(): WhatsGabyCooking,
-}
+
 
 
 def url_path_to_dict(path):
