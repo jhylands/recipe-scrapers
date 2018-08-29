@@ -2,20 +2,17 @@ from ._abstract import AbstractScraper
 from ._utils import get_minutes, normalize_string
 
 
-class Epicurious(AbstractScraper):
+class Taste(AbstractScraper):
 
     @classmethod
     def host(self):
-        return ['epicurious.com']
+        return ['taste.com.au']
 
     def title(self):
-        return self.soup.find('h1', {'itemprop': 'name'}).get_text()
-
-    def total_time(self):
-        return get_minutes(self.soup.findAll('p', {'class': 'summary_data'})[-1])
+        return self.soup.find('h1').get_text()
 
     def ingredients(self):
-        ingredients_html = self.soup.findAll('li', {'itemprop': "ingredients"})
+        ingredients_html = self.soup.findAll('div', {'class': 'ingredient-description'})
 
         return [
             normalize_string(ingredient.get_text())
@@ -23,7 +20,7 @@ class Epicurious(AbstractScraper):
         ]
 
     def instructions(self):
-        instructions_html = self.soup.find('div', {'id': 'preparation'}).find_all('p')
+        instructions_html = self.soup.findAll('div', {'class': 'recipe-method-step-content'})
 
         return '\n'.join([
             normalize_string(instruction.get_text())
@@ -31,16 +28,13 @@ class Epicurious(AbstractScraper):
         ])
 
     def categories(self):
-        categories_html = self.soup.findAll('meta', {'itemprop': 'keywords'})
-        
+        categories_html = self.soup.findAll('meta', {'name': 'keywords'})
+
         return [
             normalize_string(c) for category in categories_html
             for c in category['content'].split(',')
         ]
-
-    def rating(self):
-        return self.soup.find('span', {'class': 'rating'}).get_text()
-        
+    
     def image_url(self):
         image_html = self.soup.find('meta', {'property': 'og:image'})
         return image_html['content']
