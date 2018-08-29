@@ -25,6 +25,7 @@ from .seriouseats import SeriousEats
 from .simplyrecipes import SimplyRecipes
 from .steamykitchen import SteamyKitchen
 from .taste import Taste
+from .tasty import Tasty
 from .tastykitchen import TastyKitchen
 from .thepioneerwoman import ThePioneerWoman
 from .thevintagemixer import TheVintageMixer
@@ -72,6 +73,33 @@ _get_headers = lambda user_agent: {
 _get_proxy = lambda proxy: {
     'http': proxy,
     'https': proxy
+SCRAPERS = {
+    AllRecipes.host(): AllRecipes,
+    BBCFood.host(): BBCFood,
+    BBCGoodFood.host(): BBCGoodFood,
+    BonAppetit.host(): BonAppetit,
+    ClosetCooking.host(): ClosetCooking,
+    Cookstr.host(): Cookstr,
+    Epicurious.host(): Epicurious,
+    FineDiningLovers.host(): FineDiningLovers,
+    FoodNetwork.host(): FoodNetwork,
+    FoodRepublic.host(): FoodRepublic,
+    GialloZafferano.host(): GialloZafferano,
+    HundredAndOneCookbooks.host(): HundredAndOneCookbooks,
+    Inspiralized.host(): Inspiralized,
+    JamieOliver.host(): JamieOliver,
+    MyBakingAddiction.host(): MyBakingAddiction,
+    NIHHealthyEating.host(): NIHHealthyEating,
+    PaniniHappy.host(): PaniniHappy,
+    RealSimple.host(): RealSimple,
+    SimplyRecipes.host(): SimplyRecipes,
+    SteamyKitchen.host(): SteamyKitchen,
+    Tasty.host(): Tasty,
+    TastyKitchen.host(): TastyKitchen,
+    ThePioneerWoman.host(): ThePioneerWoman,
+    TheVintageMixer.host(): TheVintageMixer,
+    TwoPeasAndTheirPod.host(): TwoPeasAndTheirPod,
+    WhatsGabyCooking.host(): WhatsGabyCooking,
 }
 
 

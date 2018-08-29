@@ -1,9 +1,7 @@
 import re
 
 
-TIME_REGEX = re.compile(
-    r'(\D*(?P<hours>\d+)\s*(hours|hrs|hr|h|Hours|H))?(\D*(?P<minutes>\d+)\s*(minutes|mins|min|m|Minutes|M))?'
-)
+TIME_REGEX = re.compile(r'(\D*(?P<hours>\d+)\s*(hour|hours|hrs|hr|h|Hours|H))?(\D*(?P<minutes>\d+)\s*(minute|minutes|mins|min|m|Minutes|M))?')
 
 
 def get_minutes(dom_element):
@@ -17,6 +15,20 @@ def get_minutes(dom_element):
         return minutes
     except AttributeError:  # if dom_element not found or no matched
         return 0
+      
+def get_minutes_from_string(tstring):
+    try:
+        matched_dict = [match.groupdict() for match in TIME_REGEX.finditer(tstring) if match.groupdict().get('hours') or match.groupdict().get('minutes')]
+        minutes = sum(map(int, [match.get('minutes') for match in matched_dict if match.get('minutes')]))
+        minutes += 60 * sum(map(int, [match.get('hours') for match in matched_dict if match.get('hours')]))
+        return minutes
+    except AttributeError:  # if dom_element not found or no matched
+        return 0
+
+
+def get_minutes(element):
+    tstring = element.get_text()
+    return get_minutes_from_string(tstring)
 
 
 def normalize_string(string):
