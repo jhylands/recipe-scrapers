@@ -17,7 +17,7 @@ setup(
         'coverage>=4.4.0',
         'fake-useragent>=0.1.10',
         'requests',
-        'lxml'
+        'lxml',
         'requests-futures'
     ],
     packages=find_packages(),
