@@ -14,6 +14,11 @@ setup(
     long_description=README,
     install_requires=[
         'beautifulsoup4>=4.4.0',
+        'coverage>=4.4.0',
+        'fake-useragent>=0.1.10',
+        'requests',
+        'lxml'
+        'requests-futures'
     ],
     packages=find_packages(),
     package_data={'': ['LICENSE']},
