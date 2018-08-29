@@ -141,5 +141,19 @@ class AsyncScraper(object):
         print(datetime.datetime.now())
         return scrapers
 
-    
-__all__ = ['AsyncScraper']
+class WebsiteNotImplementedError(NotImplementedError):
+    '''Error for when the website is not supported by this library.'''
+    pass
+
+
+def scrape_me(url_path):
+    host_name = url_path_to_dict(url_path.replace('://www.', '://'))['host']
+    try:
+        scraper = SCRAPERS[host_name]
+    except KeyError:
+        raise WebsiteNotImplementedError(
+            "Website ({}) is not supported".format(host_name))
+
+    return scraper(url_path)    
+
+__all__ = ['AsyncScraper','scrape_me']
