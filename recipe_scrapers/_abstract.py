@@ -14,83 +14,12 @@ from fake_useragent import UserAgent
 
 import random, json
 
-
+from .Proxy import Proxy
 # some sites close their content for 'bots', so user-agent must be supplied using random user agent
 ua = UserAgent() # From here we generate a random user agent
-proxies = [] # Will contain proxies [ip, port]
-
-#### adding proxy information so as not to get blocked so fast
-def getProxyList():
-    # Retrieve latest proxies
-    url = 'https://www.sslproxies.org/'
-    header = {'User-Agent': str(ua.random)}
-    response = requests.get(url, headers=header)
-    soup = BeautifulSoup(response.text, 'lxml')
-    proxies_table = soup.find(id='proxylisttable')
-    try:
-        # Save proxies in the array
-        for row in proxies_table.tbody.find_all('tr'):
-            proxies.append({
-                'ip':   row.find_all('td')[0].string,
-                'port': row.find_all('td')[1].string
-            })
-    except:
-        print("error in getting proxy from ssl proxies")
-    return proxies
-
-def getProxyList2(proxies):
-    # Retrieve latest proxies
-    try:
-        url = 'http://list.proxylistplus.com/SSL-List-1'
-        header = {'User-Agent': str(ua.random)}
-        response = requests.get(url, headers=header)
-        soup = BeautifulSoup(response.text, 'lxml')
-        proxies_table = soup.find("table", {"class": "bg"})
-        #print(proxies_table)
-        # Save proxies in the array
-        for row in proxies_table.find_all("tr", {"class": "cells"}):
-            google = row.find_all('td')[5].string
-            if google == "yes":
-                #print(row.find_all('td')[1].string)
-                proxies.append({
-                    'ip': row.find_all('td')[1].string,
-                    'port': row.find_all('td')[2].string
-                })
-    except:
-        print("broken")
-    # Choose a random proxy
-    try:
-        url = 'http://list.proxylistplus.com/SSL-List-2'
-        header = {'User-Agent': str(ua.random)}
-        response = requests.get(url, headers=header)
-        soup = BeautifulSoup(response.text, 'lxml')
-        proxies_table = soup.find("table", {"class": "bg"})
-        # print(proxies_table)
-        # Save proxies in the array
-        for row in proxies_table.find_all("tr", {"class": "cells"}):
-            google = row.find_all('td')[5].string
-            if google == "yes":
-                #print(row.find_all('td')[1].string)
-                proxies.append({
-                    'ip': row.find_all('td')[1].string,
-                    'port': row.find_all('td')[2].string
-                })
-    except:
-        print("broken")
-
-    return proxies
-
-def getProxy():
-    proxies = getProxyList()
-    proxies = getProxyList2(proxies)
-    proxy = random.choice(proxies)
-
-    return proxy
-#### end proxy info added by ML
 
 
 class AbstractScraper():
-    proxy = getProxy()
     header = {'User-Agent': str(ua.random)}
 
     def __getattribute__(self, name):
@@ -131,7 +60,13 @@ class AbstractScraper():
 
         return object.__getattribute__(self, name)
 
-    def __init__(self, url, test=False):
+    def __init__(self, url,proxy=False, test=False):
+        if proxy:
+            self.proxies = Proxy()
+            self.proxy = getProxy()
+        else:
+            self.proxy = None
+
         if test:  # when testing, we load a file
             with url:
                 self.soup = BeautifulSoup(
