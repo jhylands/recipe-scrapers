@@ -4,7 +4,6 @@ from requests_futures.sessions import FuturesSession
 import requests
 import datetime
 
-from .jsonScraper import JsonScraper
 
 
 from .allrecipes import AllRecipes, AllRecipesUKAsia
