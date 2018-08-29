@@ -1,95 +1,5 @@
-try:
-    from urllib import request
-except:
-    from urllib2 import urlopen as request
-    from urllib2 import Request
 
-import requests
-
-from bs4 import BeautifulSoup
-from requests.models import Response
-
-
-from fake_useragent import UserAgent
-
-import random, json
-
-
-# some sites close their content for 'bots', so user-agent must be supplied using random user agent
-ua = UserAgent() # From here we generate a random user agent
-proxies = [] # Will contain proxies [ip, port]
-
-#### adding proxy information so as not to get blocked so fast
-def getProxyList():
-    # Retrieve latest proxies
-    url = 'https://www.sslproxies.org/'
-    header = {'User-Agent': str(ua.random)}
-    response = requests.get(url, headers=header)
-    soup = BeautifulSoup(response.text, 'lxml')
-    proxies_table = soup.find(id='proxylisttable')
-    try:
-        # Save proxies in the array
-        for row in proxies_table.tbody.find_all('tr'):
-            proxies.append({
-                'ip':   row.find_all('td')[0].string,
-                'port': row.find_all('td')[1].string
-            })
-    except:
-        print("error in getting proxy from ssl proxies")
-    return proxies
-
-def getProxyList2(proxies):
-    # Retrieve latest proxies
-    try:
-        url = 'http://list.proxylistplus.com/SSL-List-1'
-        header = {'User-Agent': str(ua.random)}
-        response = requests.get(url, headers=header)
-        soup = BeautifulSoup(response.text, 'lxml')
-        proxies_table = soup.find("table", {"class": "bg"})
-        #print(proxies_table)
-        # Save proxies in the array
-        for row in proxies_table.find_all("tr", {"class": "cells"}):
-            google = row.find_all('td')[5].string
-            if google == "yes":
-                #print(row.find_all('td')[1].string)
-                proxies.append({
-                    'ip': row.find_all('td')[1].string,
-                    'port': row.find_all('td')[2].string
-                })
-    except:
-        print("broken")
-    # Choose a random proxy
-    try:
-        url = 'http://list.proxylistplus.com/SSL-List-2'
-        header = {'User-Agent': str(ua.random)}
-        response = requests.get(url, headers=header)
-        soup = BeautifulSoup(response.text, 'lxml')
-        proxies_table = soup.find("table", {"class": "bg"})
-        # print(proxies_table)
-        # Save proxies in the array
-        for row in proxies_table.find_all("tr", {"class": "cells"}):
-            google = row.find_all('td')[5].string
-            if google == "yes":
-                #print(row.find_all('td')[1].string)
-                proxies.append({
-                    'ip': row.find_all('td')[1].string,
-                    'port': row.find_all('td')[2].string
-                })
-    except:
-        print("broken")
-
-    return proxies
-
-def getProxy():
-    proxies = getProxyList()
-    proxies = getProxyList2(proxies)
-    proxy = random.choice(proxies)
-
-    return proxy
-#### end proxy info added by ML
-
-
-class AbstractScraper():
+class JSONScraper():
     proxy = getProxy()
     header = {'User-Agent': str(ua.random)}
 
@@ -113,8 +23,7 @@ class AbstractScraper():
             'cholesterol',
             'carbs',
             'calories',
-            'category',
-            'datePublished'
+            'category'
         ]
         if name in decorated_methods:
             to_return = ''
@@ -124,7 +33,6 @@ class AbstractScraper():
             to_return = []
         if name == 'links':
             to_return = []
-
 
         if to_return is not None:
             return on_exception_return(to_return)(object.__getattribute__(self, name))
@@ -141,16 +49,23 @@ class AbstractScraper():
         else:
             response = requests.get(url, headers=self.header, proxies=self.proxy)
             self.soup = BeautifulSoup(response.content, 'lxml')
+
+            for recipe in self.soup.find_all('script', type='application/ld+json'):
+                self.JSON = recipe.text
+            self.data = json.loads(recipe.text)
         self.url = url
 
     def url(self):
         return self.url
 
     def host(self):
-        """ get the host of the url, so we can use the correct scraper """
+        """ get the host of the url, so we can use the correct scraper (check __init__.py) """
         raise NotImplementedError("This should be implemented.")
 
     def title(self):
+        raise NotImplementedError("This should be implemented.")
+
+    def servings(self):
         raise NotImplementedError("This should be implemented.")
 
     def total_time(self):
@@ -202,6 +117,4 @@ class AbstractScraper():
             for link in links_html
             if link['href'] not in invalid_href
         ]
-
-
 
