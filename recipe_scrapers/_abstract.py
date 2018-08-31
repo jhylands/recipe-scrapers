@@ -1,13 +1,8 @@
-import requests
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
-from .Proxy import Proxy
+from bs4 import BeautifulSoup as bs
 # some sites close their content for 'bots', so user-agent must be supplied using random user agent
-ua = UserAgent() # From here we generate a random user agent
 
 
 class AbstractScraper():
-    header = {'User-Agent': str(ua.random)}
 
     def __getattribute__(self, name):
         """
@@ -47,23 +42,9 @@ class AbstractScraper():
 
         return object.__getattribute__(self, name)
 
-    def __init__(self, url,proxy=False, test=False):
-        if proxy:
-            self.proxies = Proxy()
-            self.proxy = getProxy()
-        else:
-            self.proxy = None
-
-        if test:  # when testing, we load a file
-            with url:
-                self.soup = BeautifulSoup(
-                    url.read(),
-                    "html.parser"
-                )
-        else:
-            response = requests.get(url, headers=self.header, proxies=self.proxy)
-            self.soup = BeautifulSoup(response.content, 'lxml')
-        self.url = url
+    def __init__(self, request):
+        self.soup = BeautifulSoup(request.text,"html.parser")
+        self.url = request.url
 
     def url(self):
         return self.url

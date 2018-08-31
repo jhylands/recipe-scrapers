@@ -1,10 +1,4 @@
-import random
 import re
-from requests_futures.sessions import FuturesSession
-import requests
-import datetime
-
-
 
 from .allrecipes import AllRecipes, AllRecipesUKAsia
 from .bbcfood import BBCFood
@@ -34,8 +28,6 @@ from .thevintagemixer import TheVintageMixer
 from .twopeasandtheirpod import TwoPeasAndTheirPod
 from .whatsgabycooking import WhatsGabyCooking
 from .pinchofyum import PinchOfYum
-
-from ._proxy import get_proxies, get_user_agents_generator
 
 
 SCRAPERS = {}
@@ -70,16 +62,6 @@ SCRAPERS.update(dict.fromkeys(WhatsGabyCooking.host(), WhatsGabyCooking))
 SCRAPERS.update(dict.fromkeys(PinchOfYum.host(), PinchOfYum))
 
 
-_get_headers = lambda user_agent: {
-    'User-Agent': user_agent
-}
-
-_get_proxy = lambda proxy: {
-    'http': proxy,
-    'https': proxy
-}
-
-
 def url_path_to_dict(path):
     pattern = (r'^'
                r'((?P<schema>.+?)://)?'
@@ -97,63 +79,18 @@ def url_path_to_dict(path):
     return url_dict
 
 
-class AsyncScraper(object):
-
-    def init(self, verbose=True, max_workers=10):
-        self._max_workers = max_workers
-        self._proxy_list = get_proxies(verbose=verbose)
-        self._ua_generator = get_user_agents_generator(verbose=verbose)
-        
-    def get(self, url_paths, timeout=300, stream=False, use_proxy=False):
-        print(datetime.datetime.now())
-        url_paths = [u.replace('://www.', '://') for u in url_paths]
-        session = FuturesSession(max_workers=self._max_workers)
-        
-        if use_proxy:
-            futures = [
-                session.get(
-                    url,
-                    headers=_get_headers(self._ua_generator.random),
-                    proxies=_get_proxy(random.choice(self._proxy_list)),
-                    timeout=timeout,
-                    stream=stream)
-                for url in url_paths]
-        else:
-            futures = [
-                session.get(
-                    url,
-                    timeout=timeout,
-                    stream=stream)
-                for url in url_paths]
-
-        scrapers = []
-        for f, u in zip(futures, url_paths):
-            try:
-                r = f.result()
-                s = SCRAPERS[url_path_to_dict(u)['host']](r)
-            except Exception as e:
-                # Tmp: add logging here of failure
-                print("FAILURE: %s", e)
-                s = SCRAPERS[url_path_to_dict(u)['host']](None)
-            scrapers.append(s)
-
-        session.close()
-        print(datetime.datetime.now())
-        return scrapers
-
 class WebsiteNotImplementedError(NotImplementedError):
     '''Error for when the website is not supported by this library.'''
     pass
 
 
-def scrape_me(url_path):
-    host_name = url_path_to_dict(url_path.replace('://www.', '://'))['host']
+def scrape_me(request):
+    host_name = url_path_to_dict(request.url.replace('://www.', '://'))['host']
     try:
         scraper = SCRAPERS[host_name]
     except KeyError:
         raise WebsiteNotImplementedError(
             "Website ({}) is not supported".format(host_name))
+    return scraper(request)    
 
-    return scraper(url_path)    
-
-__all__ = ['AsyncScraper','scrape_me']
+__all__ = ['scrape_me']
